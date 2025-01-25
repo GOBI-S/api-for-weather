@@ -4,7 +4,6 @@ const schema = new Schema({
     Email: {
         type: String,
         required: true,
-        unique:true
     },
     address:{
         type:String,

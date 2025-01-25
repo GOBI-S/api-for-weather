@@ -3,7 +3,6 @@ import nodemailer from 'nodemailer';
 import Mail from "../models/mailmodel.js";
 import sendWeatherEmail from "../weatherf/weatherfetch.js";
 import sendWeatherEmailredo from "../weatherf/weatherfetchusingdbauto.js";
-let location = "";
 export const setLocation = (req) => {
     return req.body.address; // Set the location from request body
 };
@@ -13,18 +12,25 @@ export const setEmail = (req) => {
 export const enterthemail = async (req, res) => {
   setLocation(req);
   setEmail(req);
+  const finded= Mail.findOne({
+    Email:req.body.Email
+  })
   const newMail = new Mail({
     Email: req.body.Email,
     address: req.body.address,
   });
-
-  try {
-    const mail = await newMail.save();
-    await sendWeatherEmail(req,res);
-  } catch (error) {
-    console.log("error")
-    return res.status(400).json({ message: error.message });
+  if(!(finded=="")){
+    res.status(401).json({message:"Your email is alredy Stored"})
   }
+  else{
+    try {
+      const mail = await newMail.save();
+      await sendWeatherEmail(req,res);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
 };
 export const getlistmail = async (req, res) => {
   try {
