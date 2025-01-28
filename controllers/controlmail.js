@@ -12,16 +12,17 @@ export const setEmail = (req) => {
 export const enterthemail = async (req, res) => {
   setLocation(req);
   setEmail(req);
-  const finded= Mail.findOne({
+  const finded=await Mail.findOne({
     Email:req.body.Email
   })
   const newMail = new Mail({
     Email: req.body.Email,
     address: req.body.address,
   });
-  if(!(finded=="")){
-    res.status(401).json({message:"Your email is alredy Stored"})
+  if (finded) {
+    res.status(409).json({ message: "Your email is already stored" });
   }
+  
   else{
     try {
       const mail = await newMail.save();
